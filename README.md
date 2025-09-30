@@ -9,3 +9,8 @@ Must be able to be used across an application as a singleton.
 Must not make use of existing dotnet solutions, but may use external libraries.
 
 Must update consumer of evicted items.
+
+## Build
+
+- Run `nuke`
+- This should generate a .nupkg for consumption inside the /dist folder
