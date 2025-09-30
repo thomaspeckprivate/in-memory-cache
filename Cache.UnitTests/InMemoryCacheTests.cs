@@ -30,8 +30,10 @@ public class Tests
         var keys = new List<string>() { Key1, Key2 }.First(x => x != keyToEvict);
         cache.TryGet(keys, out var _);
         cache.Set(Key3, Value3);
+        var result = cache.TryGet(keyToEvict, out var _);
 
         // assert
+        result.Should().BeFalse();
         FakeLogger.Received().LogInformation($"Evicted key: [{keyToEvict}]");
     }
 
