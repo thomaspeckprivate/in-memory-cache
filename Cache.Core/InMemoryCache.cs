@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +7,7 @@ namespace Cache.Core;
 public class InMemoryCache(ILogger logger, InMemoryCacheOptions? options = null)
 {
     private readonly ILogger _logger = logger;
-    private readonly InMemoryCacheOptions? _options = options;
+    private readonly InMemoryCacheOptions _options = options ?? new();
     private readonly ConcurrentDictionary<object, object?> _data = [];
     private readonly SemaphoreSlim _semaphore = new(1);
     private readonly LinkedList<object> _accessedList = [];
@@ -45,7 +44,7 @@ public class InMemoryCache(ILogger logger, InMemoryCacheOptions? options = null)
 
     private void UpdateKeyUsed(object key)
     {
-        if ((_options?.MaxNumItems ?? 0)  <= 0)
+        if ((_options.MaxNumItems)  <= 0)
         {
             // Early return if `disabled`
             return;
@@ -58,7 +57,7 @@ public class InMemoryCache(ILogger logger, InMemoryCacheOptions? options = null)
         _accessedList.Remove(key);
 
         // Remove keys if limit hit
-        if (_accessedList.Count >= (_options?.MaxNumItems ?? long.MaxValue))
+        if (_accessedList.Count >= _options.MaxNumItems)
         {
             var lastAccessedKey = _accessedList.Last();
             _logger.LogInformation($"Evicted key: [{lastAccessedKey}]");

@@ -38,7 +38,7 @@ public class Tests
     }
 
     [Test]
-    public void TryGet_WhenSameKeyUsed_OverwritesExistingEntry()
+    public void TryGet_WhenKeyReused_RetrievesLatestEntry()
     {
         // arrange
         var cache = new InMemoryCache(FakeLogger);
@@ -47,6 +47,48 @@ public class Tests
 
         // act
         cache.TryGet(Key1, out var result);
+
+        // assert
+        result.Should().Be(Value1);
+    }
+
+    [Test]
+    public void TryGet_WhenSameKeyUsed_RetrievesExistingEntry()
+    {
+        // arrange
+        var cache = new InMemoryCache(FakeLogger);
+        cache.Set(Key1, Value1);
+
+        // act
+        cache.TryGet(Key1, out var result);
+
+        // assert
+        result.Should().Be(Value1);
+    }
+
+    [Test]
+    public void TryGet_WhenComplexKeyUsed_RetrievesExistingEntry()
+    {
+        // arrange
+        var cache = new InMemoryCache(FakeLogger);
+        cache.Set(ComplexKey, Value1);
+
+        // act
+        cache.TryGet(ComplexKey, out var result);
+
+        // assert
+        result.Should().Be(Value1);
+    }
+
+    [Test]
+    public void TryGet_WhenEqualComplexKeyUsed_RetrievesExistingEntry()
+    {
+        // arrange
+        var cache = new InMemoryCache(FakeLogger);
+        cache.Set(ComplexKey, Value1);
+
+        // act
+        cache.TryGet(ComplexKeyCopy, out var result);
 
         // assert
         result.Should().Be(Value1);
